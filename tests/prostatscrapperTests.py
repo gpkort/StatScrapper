@@ -24,4 +24,15 @@ class prostatscrapperTests(unittest.TestCase):
         players_dict = self.scrapper.get_all_by_position(POSITION.RUNNINBACK)
         self.assertIsNone(players_dict, 'All positions are None')
 
+    def test_get_players_dataset(self):
+        ds = self.scrapper.get_players_dataset(POSITION.RUNNINBACK, 'A')
+        self.assertIsNotNone(ds, "Null dataset")
+        self.assertTrue(len(ds) > 0, "Empty data set")
+
+    def test_get_runningbacks_dataset(self):
+        ds = self.scrapper.get_players_dataset(POSITION.RUNNINBACK, 'A')
+        rbds = self.scrapper.get_runningbacks_dataset(ds)
+        print(rbds.head())
+
+
 
