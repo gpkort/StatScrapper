@@ -147,3 +147,40 @@ class ProStatScrapper(object):
 
     def __str__(self):
         return str.format('Pro football stats {}', self.url)
+
+"""
+<table class="row_summable sortable stats_table" id="passing" data-cols-to-freeze=2><caption>Passing Table</caption>
+
+<tr id="passing.1979" class="full_table" >
+ <th scope="row" class="left " data-stat="year_id" ><a href="/years/1979/">1979</a></th>
+ <td class="right " data-stat="age" >23</td>
+ <td class="left " data-stat="team" ><a href="/teams/sfo/1979.htm" title="San Francisco 49ers">SFO</a></td>
+ <td class="left " data-stat="pos" >qb</td>
+ <td class="right " data-stat="uniform_number" >16</td>
+ <td class="right " data-stat="g" >16</td>
+ <td class="right " data-stat="gs" >1</td>
+ <td class="right " data-stat="qb_rec" csk="0.00000" >0-1-0</td>
+ <td class="right " data-stat="pass_cmp" >13</td>
+ <td class="right " data-stat="pass_att" >23</td>
+ <td class="right " data-stat="pass_cmp_perc" >56.5</td>
+ <td class="right " data-stat="pass_yds" >96</td>
+ <td class="right " data-stat="pass_td" >1</td>
+ <td class="right " data-stat="pass_td_perc" >4.3</td>
+ <td class="right " data-stat="pass_int" >0</td>
+ <td class="right " data-stat="pass_int_perc" >0.0</td>
+ <td class="right " data-stat="pass_long" >18</td>
+ <td class="right " data-stat="pass_yds_per_att" >4.2</td>
+ <td class="right " data-stat="pass_adj_yds_per_att" >5.0</td>
+ <td class="right " data-stat="pass_yds_per_cmp" >7.4</td>
+ <td class="right " data-stat="pass_yds_per_g" >6.0</td>
+ <td class="right " data-stat="pass_rating" >81.1</td>
+ <td class="right " data-stat="pass_sacked" >0</td>
+ <td class="right " data-stat="pass_sacked_yds" >0</td>
+ <td class="right " data-stat="pass_net_yds_per_att" >4.17</td>
+ <td class="right " data-stat="pass_adj_net_yds_per_att" >5.04</td>
+ <td class="right " data-stat="pass_sacked_perc" >0.0</td>
+ <td class="right " data-stat="comebacks" ></td>
+ <td class="right " data-stat="gwd" ></td>
+ <td class="right " data-stat="av" >0</td>
+</tr>
+"""
