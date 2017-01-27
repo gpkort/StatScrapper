@@ -21,8 +21,10 @@ class prostatscrapperTests(unittest.TestCase):
         self.assertEqual(len(POSITION)-1, len(col_dict), 'Dictionary length incorrect')
 
     def test_get_position(self):
-        players_dict = self.scrapper.get_all_by_position(POSITION.RUNNINBACK)
-        self.assertIsNone(players_dict, 'All positions are None')
+        players_dict = self.scrapper.get_all_players_by_position(POSITION.RUNNINBACK)
+        self.assertIsNotNone(players_dict, 'All positions are None')
+        self.assertGreater(len(players_dict), 0, "Empty player/pos dataset")
+        print(players_dict.tail())
 
     def test_get_players_dataset(self):
         ds = self.scrapper.get_players_dataset(POSITION.RUNNINBACK, 'A')
@@ -30,8 +32,9 @@ class prostatscrapperTests(unittest.TestCase):
         self.assertTrue(len(ds) > 0, "Empty data set")
 
     def test_get_runningbacks_dataset(self):
-        ds = self.scrapper.get_players_dataset(POSITION.RUNNINBACK, 'A')
+        ds = self.scrapper.get_players_dataset(POSITION.RUNNINBACK, 'I')
         rbds = self.scrapper.get_runningbacks_dataset(ds)
+        self.assertGreater(len(rbds), 0, "Empty player dataset")
         print(rbds.head())
 
 

@@ -2,6 +2,8 @@ from enum import Enum
 from bs4 import BeautifulSoup
 import pandas as pd
 import requests
+from string import ascii_lowercase
+
 
 
 class POSITION(Enum):
@@ -48,12 +50,25 @@ class ProStatScrapper(object):
 
     def get_columns(self, position):
         if position == POSITION.RUNNINBACK:
-            return ['id', 'name', 'year', 'g', 'gs', 'rush_att', 'rush_yds', 'rush_td', 'rush_long',
+            return ['id', 'name', 'team', 'age', 'year', 'g', 'gs', 'rush_att', 'rush_yds', 'rush_td', 'rush_long',
                     'rush_yds_per_att', 'rush_yds_per_g', 'rush_att_per_g', 'rec', 'rec_yds',
                     'rec_yds_per_rec', 'rec_td', 'rec_long', 'rec_per_g', 'rec_yds_per_g',
                     'yds_from_scrimmage', 'rush_receive_td', 'fumbles']
         else:
             return None
+
+    def get_all_players_by_position(self, position):
+        ds_list = []
+
+        for l in ascii_lowercase:
+            player_df = self.get_players_dataset(position, l)
+
+            if position == POSITION.RUNNINBACK:
+                print('Getting th players that begin with ' + l)
+                ds_list.append(self.get_runningbacks_dataset(player_df))
+
+        return pd.concat(ds_list)
+
 
     def get_players_dataset(self, position, letter):
         req = requests.get(STANDARD_URL + '/' + PLAYERS + '/' + letter.upper())
@@ -77,8 +92,9 @@ class ProStatScrapper(object):
         years = pd.DataFrame(columns=self.get_columns(POSITION.RUNNINBACK))
 
         for index, prow in rb_dataset.iterrows():
+            print('Retrieving running back ' + prow['name'])
+
             url = STANDARD_URL + prow['link']
-            print('URL = ' + url)
             req = requests.get(url)
             soup = BeautifulSoup(req.text, "lxml")
             stats_overall = soup.find_all('table', {'class': 'row_summable sortable stats_table'})
@@ -94,11 +110,8 @@ class ProStatScrapper(object):
             pid = url[last_slash_idx: last_dot_idx]
 
             for row in stats_table[0].find_all('tr'):
-                if 'id' in row and 'rushing_and_receiving' in row['id']:
+                if row.has_attr('id') and 'rushing_and_receiving' in row['id']:
                     year = row.find('th').text[:4]
-                    print('Year = ' + year)
-
-                    g = 0
                     g = row.find('td', {'data-stat': 'g'}).text
 
                     gamestarts = row.find('td', {'data-stat': 'gs'})
@@ -122,12 +135,14 @@ class ProStatScrapper(object):
                     yds_from_scrimmage = row.find('td', {'data-stat': 'yds_from_scrimmage'}).text
                     rush_receive_td = row.find('td', {'data-stat': 'rush_receive_td'}).text
                     fumbles = row.find('td', {'data-stat': 'fumbles'}).text
-                    years.loc[i] = [pid, prow['name'], year, g, gs, rush_att, rush_yds, rush_td, rush_long,
+                    age = row.find('td', {'data-stat': 'age'}).text
+                    team = row.find('td', {'data-stat': 'team'}).text
+                    years.loc[i] = [pid, prow['name'], team, age, year, g, gs, rush_att, rush_yds, rush_td, rush_long,
                                     rush_yds_per_att, rush_yds_per_g, rush_att_per_g, rec, rec_yds, rec_yds_per_rec,
                                     rec_td, rec_long, rec_per_g, rec_yds_per_g, yds_from_scrimmage,
                                     rush_receive_td, fumbles]
                     i += 1
-
+                    
         return years
 
     def __str__(self):
