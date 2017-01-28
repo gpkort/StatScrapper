@@ -8,7 +8,8 @@ from string import ascii_lowercase
 
 class POSITION(Enum):
     NONE = 0,
-    RUNNINBACK = 1
+    RUNNINGBACK = 1,
+    QUARTERBACK = 2
 
 
 STANDARD_URL = 'http://www.pro-football-reference.com'
@@ -18,7 +19,7 @@ SLASH = '/'
 
 
 class ProStatScrapper(object):
-    __PLAYER_DICTIONARY = {POSITION.RUNNINBACK: 'RB'}
+    __PLAYER_DICTIONARY = {POSITION.RUNNINGBACK: 'RB', POSITION.QUARTERBACK: 'QB'}
 
     __rb_dataset = None
 
@@ -46,14 +47,23 @@ class ProStatScrapper(object):
             else:
                 column_dict[pos] = self.get_columns(pos)
 
-            return column_dict
+        return column_dict
 
     def get_columns(self, position):
-        if position == POSITION.RUNNINBACK:
-            return ['id', 'name', 'team', 'age', 'year', 'g', 'gs', 'rush_att', 'rush_yds', 'rush_td', 'rush_long',
-                    'rush_yds_per_att', 'rush_yds_per_g', 'rush_att_per_g', 'rec', 'rec_yds',
-                    'rec_yds_per_rec', 'rec_td', 'rec_long', 'rec_per_g', 'rec_yds_per_g',
-                    'yds_from_scrimmage', 'rush_receive_td', 'fumbles']
+        if position == POSITION.RUNNINGBACK:
+            return ['id', 'name', 'team', 'age', 'year', 'g', 'gs', 'rush_att', 'rush_yds',
+                    'rush_td', 'rush_long', 'rush_yds_per_att', 'rush_yds_per_g',
+                    'rush_att_per_g', 'rec', 'rec_yds', 'rec_yds_per_rec', 'rec_td',
+                    'rec_long', 'rec_per_g', 'rec_yds_per_g', 'yds_from_scrimmage',
+                    'rush_receive_td', 'fumbles']
+
+        elif position == POSITION.QUARTERBACK:
+            return ['id', 'name', 'team', 'age', 'year', 'g', 'gs', 'pass_cmp', 'pass_att',
+                    'pass_cmp_perc', 'pass_yds', 'pass_td', 'pass_td_perc', 'pass_int',
+                    'pass_int_perc', 'pass_long', 'pass_yds_per_att', 'pass_adj_yds_per_att',
+                    'pass_yds_per_cmp', 'pass_yds_per_g', 'pass_rating', 'pass_sacked',
+                    'pass_sacked_yds', 'pass_net_yds_per_att', 'pass_adj_net_yds_per_att',
+                    'pass_sacked_perc']
         else:
             return None
 
@@ -63,7 +73,7 @@ class ProStatScrapper(object):
         for l in ascii_lowercase:
             player_df = self.get_players_dataset(position, l)
 
-            if position == POSITION.RUNNINBACK:
+            if position == POSITION.RUNNINGBACK:
                 print('Getting th players that begin with ' + l)
                 ds_list.append(self.get_runningbacks_dataset(player_df))
 
@@ -87,9 +97,69 @@ class ProStatScrapper(object):
 
         return player_df
 
+    def get_quarterbacks_dataset(self, rb_dataset):
+        i = 0
+        years = pd.DataFrame(columns=self.get_columns(POSITION.QUARTERBACK))
+
+        for index, prow in rb_dataset.iterrows():
+            print('Retrieving quatrerback ' + prow['name'])
+
+            url = STANDARD_URL + prow['link']
+            req = requests.get(url)
+            soup = BeautifulSoup(req.text, "lxml")
+            stats_overall = soup.find_all('table', {'class': 'row_summable sortable stats_table'})
+            if len(stats_overall) == 0:
+                continue
+
+            stats_table = stats_overall[0].find_all('tbody')
+            if len(stats_table) == 0:
+                continue
+
+            last_slash_idx = url.rfind('/') + 1
+            last_dot_idx = url.rfind('.')
+            pid = url[last_slash_idx: last_dot_idx]
+
+            for row in stats_table[0].find_all('tr'):
+                if row.has_attr('id') and 'passing' in row['id']:
+                    year = row.find('th').text[:4]
+                    g = row.find('td', {'data-stat': 'g'}).text
+                    gs = row.find('td', {'data-stat': 'gs'}).text
+                    pass_cmp = row.find('td', {'data-stat': 'pass_cmp'}).text
+                    pass_att = row.find('td', {'data-stat': 'pass_att'}).text
+                    pass_cmp_perc = row.find('td', {'data-stat': 'pass_cmp_perc'}).text
+                    pass_yds = row.find('td', {'data-stat': 'pass_yds'}).text
+                    pass_td = row.find('td', {'data-stat': 'pass_td'}).text
+                    pass_td_perc = row.find('td', {'data-stat': 'pass_td_perc'}).text
+                    pass_int_perc = row.find('td', {'data-stat': 'pass_int_perc'}).text
+                    pass_int = row.find('td', {'data-stat': 'pass_int'}).text
+                    pass_long = row.find('td', {'data-stat': 'pass_long'}).text
+                    pass_yds_per_att = row.find('td', {'data-stat': 'pass_yds_per_att'}).text
+                    pass_adj_yds_per_att = row.find('td', {'data-stat': 'pass_adj_yds_per_att'}).text
+                    pass_yds_per_cmp = row.find('td', {'data-stat': 'pass_yds_per_cmp'}).text
+                    pass_yds_per_g = row.find('td', {'data-stat': 'pass_yds_per_g'}).text
+                    pass_rating = row.find('td', {'data-stat': 'pass_rating'}).text
+                    pass_sacked = row.find('td', {'data-stat': 'pass_sacked'}).text
+                    pass_sacked_yds = row.find('td', {'data-stat': 'pass_sacked_yds'}).text
+                    pass_net_yds_per_att = row.find('td', {'data-stat': 'pass_net_yds_per_att'}).text
+                    pass_sacked_yds = row.find('td', {'data-stat': 'pass_sacked_yds'}).text
+                    pass_adj_net_yds_per_att = row.find('td', {'data-stat': 'pass_adj_net_yds_per_att'}).text
+                    pass_sacked_perc = row.find('td', {'data-stat': 'pass_sacked_perc'}).text
+                    age = row.find('td', {'data-stat': 'age'}).text
+                    team = row.find('td', {'data-stat': 'team'}).text
+
+                    years.loc[i] = [pid, prow['name'], team, age, year, g, gs, pass_cmp, pass_att,
+                                    pass_cmp_perc, pass_yds, pass_td, pass_td_perc, pass_int,
+                                    pass_int_perc, pass_long, pass_yds_per_att, pass_adj_yds_per_att,
+                                    pass_yds_per_cmp, pass_yds_per_g, pass_rating, pass_sacked,
+                                    pass_sacked_yds, pass_net_yds_per_att, pass_adj_net_yds_per_att,
+                                    pass_sacked_perc]
+                    i += 1
+
+        return years
+
     def get_runningbacks_dataset(self, rb_dataset):
         i = 0
-        years = pd.DataFrame(columns=self.get_columns(POSITION.RUNNINBACK))
+        years = pd.DataFrame(columns=self.get_columns(POSITION.RUNNINGBACK))
 
         for index, prow in rb_dataset.iterrows():
             print('Retrieving running back ' + prow['name'])
@@ -142,7 +212,7 @@ class ProStatScrapper(object):
                                     rec_td, rec_long, rec_per_g, rec_yds_per_g, yds_from_scrimmage,
                                     rush_receive_td, fumbles]
                     i += 1
-                    
+
         return years
 
     def __str__(self):
