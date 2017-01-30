@@ -16,6 +16,10 @@ class prostatscrapperTests(unittest.TestCase):
         self.assertIsNotNone(columns, 'Columns are none')
         self.assertEqual(26, len(columns), 'QB column length incorrect')
 
+        columns = self.scrapper.get_columns(POSITION.WIDE_RECEIVER)
+        self.assertIsNotNone(columns, 'Columns are none')
+        self.assertEqual(25, len(columns), 'WR column length incorrect')
+
         columns = self.scrapper.get_columns(POSITION.NONE)
         self.assertIsNone(columns, 'Columns are not none')
 
@@ -46,6 +50,18 @@ class prostatscrapperTests(unittest.TestCase):
         qbds = self.scrapper.get_quarterbacks_dataset(ds)
         self.assertGreater(len(qbds), 0, "Empty player dataset")
         print(qbds.head())
+
+    def test_get_receivers_dataset(self):
+        ds = self.scrapper.get_players_dataset(POSITION.WIDE_RECEIVER, 'Z')
+        wrds = self.scrapper.get_catching_dataset(ds, POSITION.WIDE_RECEIVER)
+        self.assertGreater(len(wrds), 0, "Empty receiver player dataset")
+        print(wrds.head())
+
+    def test_get_te_dataset(self):
+        ds = self.scrapper.get_players_dataset(POSITION.TIGHT_END, 'G')
+        wrds = self.scrapper.get_catching_dataset(ds, POSITION.TIGHT_END)
+        self.assertGreater(len(wrds), 0, "Empty receiver player dataset")
+        print(wrds.head())
 
 
 
