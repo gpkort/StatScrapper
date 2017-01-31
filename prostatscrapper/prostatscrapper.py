@@ -22,9 +22,7 @@ class ProStatScrapper(object):
     __PLAYER_DICTIONARY = {POSITION.RUNNINGBACK: 'RB',
                            POSITION.QUARTERBACK: 'QB',
                            POSITION.WIDE_RECEIVER: 'WR',
-                           POSITION.TIGHT_END: 'TE'
-                           }
-
+                           POSITION.TIGHT_END: 'TE'}
 
     __rb_dataset = None
 
@@ -33,9 +31,6 @@ class ProStatScrapper(object):
 
     def get_all(self):
         pass
-
-    def get_all_by_position(self, position):
-        return None
 
     def get_all_by_last(self, letter):
         pass
@@ -70,7 +65,7 @@ class ProStatScrapper(object):
                     'pass_sacked_yds', 'pass_net_yds_per_att', 'pass_adj_net_yds_per_att',
                     'pass_sacked_perc']
 
-        elif position == POSITION.WIDE_RECEIVER or  position == POSITION.TIGHT_END:
+        elif position == POSITION.WIDE_RECEIVER or position == POSITION.TIGHT_END:
             return ['id', 'name', 'age', 'year', 'team', 'g', 'gs', 'rec', 'rec_yds',
                     'rec_yds_per_rec', 'rec_td', 'rec_long', 'rec_per_g', 'rec_yds_per_g',
                     'catch_pct', 'rush_att', 'rush_yds', 'rush_td', 'rush_long',
@@ -144,22 +139,28 @@ class ProStatScrapper(object):
                     pass_int_perc = row.find('td', {'data-stat': 'pass_int_perc'}).text
                     pass_int = row.find('td', {'data-stat': 'pass_int'}).text
                     pass_long = row.find('td', {'data-stat': 'pass_long'}).text
-                    pass_yds_per_att = row.find('td', {'data-stat': 'pass_yds_per_att'}).text
-                    pass_adj_yds_per_att = row.find('td', {'data-stat': 'pass_adj_yds_per_att'}).text
-                    pass_yds_per_cmp = row.find('td', {'data-stat': 'pass_yds_per_cmp'}).text
+                    pass_yds_per_att =\
+                        row.find('td', {'data-stat': 'pass_yds_per_att'}).text
+                    pass_adj_yds_per_att = \
+                        row.find('td', {'data-stat': 'pass_adj_yds_per_att'}).text
+                    pass_yds_per_cmp = \
+                        row.find('td', {'data-stat': 'pass_yds_per_cmp'}).text
                     pass_yds_per_g = row.find('td', {'data-stat': 'pass_yds_per_g'}).text
                     pass_rating = row.find('td', {'data-stat': 'pass_rating'}).text
                     pass_sacked = row.find('td', {'data-stat': 'pass_sacked'}).text
                     pass_sacked_yds = row.find('td', {'data-stat': 'pass_sacked_yds'}).text
-                    pass_net_yds_per_att = row.find('td', {'data-stat': 'pass_net_yds_per_att'}).text
-                    pass_adj_net_yds_per_att = row.find('td', {'data-stat': 'pass_adj_net_yds_per_att'}).text
+                    pass_net_yds_per_att = \
+                        row.find('td', {'data-stat': 'pass_net_yds_per_att'}).text
+                    pass_adj_net_yds_per_att = \
+                        row.find('td', {'data-stat': 'pass_adj_net_yds_per_att'}).text
                     pass_sacked_perc = row.find('td', {'data-stat': 'pass_sacked_perc'}).text
                     age = row.find('td', {'data-stat': 'age'}).text
                     team = row.find('td', {'data-stat': 'team'}).text
 
-                    years.loc[i] = [pid, prow['name'], team, age, year, g, gs, pass_cmp, pass_att,
-                                    pass_cmp_perc, pass_yds, pass_td, pass_td_perc, pass_int,
-                                    pass_int_perc, pass_long, pass_yds_per_att, pass_adj_yds_per_att,
+                    years.loc[i] = [pid, prow['name'], team, age, year, g, gs, pass_cmp,
+                                    pass_att, pass_cmp_perc, pass_yds, pass_td,
+                                    pass_td_perc, pass_int, pass_int_perc, pass_long,
+                                    pass_yds_per_att, pass_adj_yds_per_att,
                                     pass_yds_per_cmp, pass_yds_per_g, pass_rating, pass_sacked,
                                     pass_sacked_yds, pass_net_yds_per_att, pass_adj_net_yds_per_att,
                                     pass_sacked_perc]
@@ -217,8 +218,10 @@ class ProStatScrapper(object):
                     fumbles = row.find('td', {'data-stat': 'fumbles'}).text
                     age = row.find('td', {'data-stat': 'age'}).text
                     team = row.find('td', {'data-stat': 'team'}).text
-                    years.loc[i] = [pid, prow['name'], team, age, year, g, gs, rush_att, rush_yds, rush_td, rush_long,
-                                    rush_yds_per_att, rush_yds_per_g, rush_att_per_g, rec, rec_yds, rec_yds_per_rec,
+
+                    years.loc[i] = [pid, prow['name'], team, age, year, g, gs, rush_att,
+                                    rush_yds, rush_td, rush_long, rush_yds_per_att,
+                                    rush_yds_per_g, rush_att_per_g, rec, rec_yds, rec_yds_per_rec,
                                     rec_td, rec_long, rec_per_g, rec_yds_per_g, yds_from_scrimmage,
                                     rush_receive_td, fumbles]
                     i += 1
@@ -275,8 +278,9 @@ class ProStatScrapper(object):
                     age = row.find('td', {'data-stat': 'age'}).text
                     team = row.find('td', {'data-stat': 'team'}).text
 
-                    years.loc[i] = [pid, prow['name'], age, year, team, g, gs, rec, rec_yds, rec_yds_per_rec,
-                                    rec_td, rec_long,  rec_per_g, rec_yds_per_g, catch_pct, rush_att,
+                    years.loc[i] = [pid, prow['name'], age, year, team, g, gs, rec,
+                                    rec_yds, rec_yds_per_rec, rec_td, rec_long,
+                                    rec_per_g, rec_yds_per_g, catch_pct, rush_att,
                                     rush_yds, rush_td, rush_long, rush_yds_per_att, rush_yds_per_g,
                                     rush_att_per_g, yds_from_scrimmage, rush_receive_td, fumbles]
                     i += 1
@@ -285,5 +289,3 @@ class ProStatScrapper(object):
 
     def __str__(self):
         return str.format('Pro football stats {}', self.url)
-
-
