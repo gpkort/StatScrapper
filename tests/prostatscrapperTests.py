@@ -35,31 +35,31 @@ class prostatscrapperTests(unittest.TestCase):
     #     print(players_dict.tail())
 
     def test_get_players_dataset(self):
-        ds = self.scrapper.get_players_dataset(POSITION.QUARTERBACK, 'Z')
-        self.assertIsNotNone(ds, "Null dataset")
-        self.assertTrue(len(ds) > 0, "Empty data set")
+        ds1 = self.scrapper.get_players_dataset(POSITION.QUARTERBACK, 'Z')
+        self.assertIsNotNone(ds1, "Null dataset")
+        self.assertTrue(len(ds1) > 0, "Empty data set")
+
+        ds2 = self.scrapper.get_players_dataset(POSITION.QUARTERBACK, 'zebra')
+        self.assertIsNotNone(ds2, "Null dataset")
+        self.assertEqual(len(ds2), len(ds2), "Empty data set")
 
     def test_get_runningbacks_dataset(self):
-        ds = self.scrapper.get_players_dataset(POSITION.RUNNINGBACK, 'I')
-        rbds = self.scrapper.get_runningbacks_dataset(ds)
+        rbds = self.scrapper.get_players_by_position_and_letter(POSITION.RUNNINGBACK, 'I')
         self.assertGreater(len(rbds), 0, "Empty player dataset")
         print(rbds.head())
 
     def test_get_quarterbacks_dataset(self):
-        ds = self.scrapper.get_players_dataset(POSITION.QUARTERBACK, 'Z')
-        qbds = self.scrapper.get_quarterbacks_dataset(ds)
+        qbds = self.scrapper.get_players_by_position_and_letter(POSITION.QUARTERBACK, 'Z')
         self.assertGreater(len(qbds), 0, "Empty player dataset")
         print(qbds.head())
 
     def test_get_receivers_dataset(self):
-        ds = self.scrapper.get_players_dataset(POSITION.WIDE_RECEIVER, 'Z')
-        wrds = self.scrapper.get_catching_dataset(ds, POSITION.WIDE_RECEIVER)
+        wrds = self.scrapper.get_players_by_position_and_letter(POSITION.WIDE_RECEIVER, 'Z')
         self.assertGreater(len(wrds), 0, "Empty receiver player dataset")
         print(wrds.head())
 
     def test_get_te_dataset(self):
-        ds = self.scrapper.get_players_dataset(POSITION.TIGHT_END, 'G')
-        wrds = self.scrapper.get_catching_dataset(ds, POSITION.TIGHT_END)
+        wrds = self.scrapper.get_players_by_position_and_letter(POSITION.TIGHT_END, 'G')
         self.assertGreater(len(wrds), 0, "Empty receiver player dataset")
         print(wrds.head())
 
