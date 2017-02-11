@@ -224,6 +224,11 @@ STANDARD_URL = 'http://www.pro-football-reference.com'
 PLAYERS = '/players'
 SLASH = '/'
 
+def get_last_slash(url):
+    return url.rfind(SLASH) + 1
+
+
+
 
 class ProStatScrapper(object):
     """
@@ -430,8 +435,8 @@ class ProStatScrapper(object):
             for row in stats_table[0].find_all('tr'):
                 if row.has_attr('id') and 'passing' in row['id']:
                     year = row.find('th').text[:4]
-                    g = row.find('td', {'data-stat': 'g'}).text
-                    gs = row.find('td', {'data-stat': 'gs'}).text
+                    games = row.find('td', {'data-stat': 'g'}).text
+                    games_started = row.find('td', {'data-stat': 'gs'}).text
                     pass_cmp = row.find('td', {'data-stat': 'pass_cmp'}).text
                     pass_att = row.find('td', {'data-stat': 'pass_att'}).text
                     pass_cmp_perc = row.find('td', {'data-stat': 'pass_cmp_perc'}).text
@@ -459,13 +464,14 @@ class ProStatScrapper(object):
                     age = row.find('td', {'data-stat': 'age'}).text
                     team = row.find('td', {'data-stat': 'team'}).text
 
-                    years.loc[i] = [pid, prow['name'], team, age, year, g, gs, pass_cmp,
-                                    pass_att, pass_cmp_perc, pass_yds, pass_td,
-                                    pass_td_perc, pass_int, pass_int_perc, pass_long,
-                                    pass_yds_per_att, pass_adj_yds_per_att,
-                                    pass_yds_per_cmp, pass_yds_per_g, pass_rating, pass_sacked,
-                                    pass_sacked_yds, pass_net_yds_per_att, pass_adj_net_yds_per_att,
-                                    pass_sacked_perc]
+                    years.loc[i] = [pid, prow['name'], team, age, year, games,
+                                    games_started, pass_cmp, pass_att,
+                                    pass_cmp_perc, pass_yds, pass_td,
+                                    pass_td_perc, pass_int, pass_int_perc,
+                                    pass_long, pass_yds_per_att, pass_adj_yds_per_att,
+                                    pass_yds_per_cmp, pass_yds_per_g, pass_rating,
+                                    pass_sacked, pass_sacked_yds, pass_net_yds_per_att,
+                                    pass_adj_net_yds_per_att, pass_sacked_perc]
                     i += 1
 
         return years
@@ -488,23 +494,18 @@ class ProStatScrapper(object):
             if len(stats_table) == 0:
                 continue
 
-            last_slash_idx = url.rfind('/') + 1
             last_dot_idx = url.rfind('.')
-            pid = url[last_slash_idx: last_dot_idx]
+            pid = url[get_last_slash(url): last_dot_idx]
 
             for row in stats_table[0].find_all('tr'):
                 if row.has_attr('id') and 'rushing_and_receiving' in row['id']:
                     year = row.find('th').text[:4]
-                    g = row.find('td', {'data-stat': 'g'}).text
-
-                    gamestarts = row.find('td', {'data-stat': 'gs'})
-                    gs = gamestarts.text
+                    games = row.find('td', {'data-stat': 'g'}).text
+                    game_starts = row.find('td', {'data-stat': 'gs'}).text
                     rush_att = row.find('td', {'data-stat': 'rush_att'}).text
                     rush_yds = row.find('td', {'data-stat': 'rush_yds'}).text
                     rush_td = row.find('td', {'data-stat': 'rush_td'}).text
-                    rl = row.find('td', {'data-stat': 'rush_long'})
-                    rush_long = rl.text
-
+                    rush_long = row.find('td', {'data-stat': 'rush_long'}).text
                     rush_yds_per_att = row.find('td', {'data-stat': 'rush_yds_per_att'}).text
                     rush_yds_per_g = row.find('td', {'data-stat': 'rush_yds_per_g'}).text
                     rush_att_per_g = row.find('td', {'data-stat': 'rush_att_per_g'}).text
@@ -521,11 +522,12 @@ class ProStatScrapper(object):
                     age = row.find('td', {'data-stat': 'age'}).text
                     team = row.find('td', {'data-stat': 'team'}).text
 
-                    years.loc[i] = [pid, prow[1]['name'], team, age, year, g, gs, rush_att,
-                                    rush_yds, rush_td, rush_long, rush_yds_per_att,
-                                    rush_yds_per_g, rush_att_per_g, rec, rec_yds, rec_yds_per_rec,
-                                    rec_td, rec_long, rec_per_g, rec_yds_per_g, yds_from_scrimmage,
-                                    rush_receive_td, fumbles]
+                    years.loc[i] = [pid, prow[1]['name'], team, age, year, games,
+                                    game_starts, rush_att, rush_yds, rush_td,
+                                    rush_long, rush_yds_per_att, rush_yds_per_g,
+                                    rush_att_per_g, rec, rec_yds, rec_yds_per_rec,
+                                    rec_td, rec_long, rec_per_g, rec_yds_per_g,
+                                    yds_from_scrimmage, rush_receive_td, fumbles]
                     i += 1
 
         return years
@@ -556,8 +558,8 @@ class ProStatScrapper(object):
             for row in stats_table[0].find_all('tr'):
                 if row.has_attr('id') and 'receiving_and_rushing' in row['id']:
                     year = row.find('th').text[:4]
-                    g = row.find('td', {'data-stat': 'g'}).text
-                    gs = row.find('td', {'data-stat': 'gs'}).text
+                    games = row.find('td', {'data-stat': 'g'}).text
+                    game_starts = row.find('td', {'data-stat': 'gs'}).text
 
                     rec = row.find('td', {'data-stat': 'rec'}).text
                     rec_yds = row.find('td', {'data-stat': 'rec_yds'}).text
@@ -580,7 +582,7 @@ class ProStatScrapper(object):
                     age = row.find('td', {'data-stat': 'age'}).text
                     team = row.find('td', {'data-stat': 'team'}).text
 
-                    years.loc[i] = [pid, prow[1]['name'], age, year, team, g, gs, rec,
+                    years.loc[i] = [pid, prow[1]['name'], age, year, team, games, game_starts, rec,
                                     rec_yds, rec_yds_per_rec, rec_td, rec_long,
                                     rec_per_g, rec_yds_per_g, catch_pct, rush_att,
                                     rush_yds, rush_td, rush_long, rush_yds_per_att, rush_yds_per_g,
