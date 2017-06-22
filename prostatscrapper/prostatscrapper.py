@@ -208,6 +208,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import requests
 
+
 class POSITION(Enum):
     """
     An enumerator to define player positions
@@ -224,10 +225,9 @@ STANDARD_URL = 'http://www.pro-football-reference.com'
 PLAYERS = '/players'
 SLASH = '/'
 
+
 def get_last_slash(url):
     return url.rfind(SLASH) + 1
-
-
 
 
 class ProStatScrapper(object):
@@ -352,7 +352,6 @@ class ProStatScrapper(object):
 
         return pdf
 
-
     def get_all_players_by_position(self, position):
         """
         get_all_player_by_position method allows user to get
@@ -446,7 +445,7 @@ class ProStatScrapper(object):
                     pass_int_perc = row.find('td', {'data-stat': 'pass_int_perc'}).text
                     pass_int = row.find('td', {'data-stat': 'pass_int'}).text
                     pass_long = row.find('td', {'data-stat': 'pass_long'}).text
-                    pass_yds_per_att =\
+                    pass_yds_per_att = \
                         row.find('td', {'data-stat': 'pass_yds_per_att'}).text
                     pass_adj_yds_per_att = \
                         row.find('td', {'data-stat': 'pass_adj_yds_per_att'}).text
