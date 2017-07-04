@@ -207,6 +207,7 @@ from string import ascii_lowercase
 from bs4 import BeautifulSoup
 import pandas as pd
 import requests
+import multiprocessing
 
 
 class POSITION(Enum):
@@ -247,12 +248,17 @@ class ProStatScrapper(object):
 
     __rb_dataset = None
 
-    def __init__(self, path=None):
+    def __init__(self, path: str=None, multiprocessing: bool=False):
         """
         Constructor
         :param path: Optional parameter to override default url for pro football site
         """
         self.url = STANDARD_URL if path is None else path
+
+        self.useMultiProcessing = multiprocessing
+
+        if self.useMultiProcessing :
+            self.numberOfCores = multiprocessing.cpu_count()
 
     def get_all(self):
         """
