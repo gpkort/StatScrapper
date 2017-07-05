@@ -7,6 +7,10 @@ class prostatscrapperTests(unittest.TestCase):
     def setUp(self):
         self.scrapper = ProStatScrapper()
 
+    def test_get_core_number(self):
+        self.scrapper = ProStatScrapper(True)
+        self.assertEqual(4, self.scrapper.numberOfCores)
+
     def test_get_columns(self):
         columns = self.scrapper.get_columns(POSITION.RUNNINGBACK)
         self.assertIsNotNone(columns, 'Columns are none')
@@ -62,6 +66,3 @@ class prostatscrapperTests(unittest.TestCase):
         wrds = self.scrapper.get_players_by_position_and_letter(POSITION.TIGHT_END, 'G')
         self.assertGreater(len(wrds), 0, "Empty receiver player dataset")
         print(wrds.head())
-
-
-

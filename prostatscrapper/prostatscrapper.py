@@ -248,7 +248,7 @@ class ProStatScrapper(object):
 
     __rb_dataset = None
 
-    def __init__(self, path: str=None, multiprocessing: bool=False):
+    def __init__(self, useMulticores: bool=False, path: str=None):
         """
         Constructor
         :param path: Optional parameter to override default url for pro football site
@@ -257,7 +257,7 @@ class ProStatScrapper(object):
 
         self.useMultiProcessing = multiprocessing
 
-        if self.useMultiProcessing :
+        if self.useMultiProcessing:
             self.numberOfCores = multiprocessing.cpu_count()
 
     def get_all(self):
