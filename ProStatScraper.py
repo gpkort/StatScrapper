@@ -209,6 +209,7 @@ import pandas as pd
 import requests
 import Constants
 
+
 def get_columns():
     req = requests.get(Constants.STANDARD_URL + '/' + Constants.PLAYERS + '/F/FaulMa00.htm')
     soup = BeautifulSoup(req.text, "lxml")
@@ -220,8 +221,22 @@ def get_columns():
     for name in stat_names:
         print(name)
         info_dict[name['data-stat']] = name.get('data-tip')
-        # info_dict[name['data-stat']]
-    print(info_dict)
+
+    return info_dict
+
+
+def get_player_dataset():
+    req = requests.get(Constants.STANDARD_URL + '/' + Constants.PLAYERS + '/F/FaulMa00.htm')
+    soup = BeautifulSoup(req.text, "lxml")
+    stats_overall = soup.find_all('table', {'class': 'row_summable sortable stats_table'})
+    names_row = stats_overall[0].find_all('thead')[0].find_all('tr')[1]
+    stat_names = names_row.find_all('th')
+    info_dict = {}
+
+    for name in stat_names:
+        info_dict[name['data-stat']] = list()
+
+    return info_dict
 
 
 if __name__ == "__main__":
