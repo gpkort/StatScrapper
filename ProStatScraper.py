@@ -219,14 +219,13 @@ def get_columns():
     info_dict = {}
 
     for name in stat_names:
-        print(name)
         info_dict[name['data-stat']] = name.get('data-tip')
 
     return info_dict
 
 
-def get_player_dataset():
-    req = requests.get(Constants.STANDARD_URL + '/' + Constants.PLAYERS + '/F/FaulMa00.htm')
+def get_player_dataset(url):
+    req = requests.get(url)
     soup = BeautifulSoup(req.text, "lxml")
     stats_overall = soup.find_all('table', {'class': 'row_summable sortable stats_table'})
     names_row = stats_overall[0].find_all('thead')[0].find_all('tr')[1]
@@ -236,8 +235,21 @@ def get_player_dataset():
     for name in stat_names:
         info_dict[name['data-stat']] = list()
 
-    return info_dict
+    body = stats_overall[0].find('tbody')
+
+    for row in body.find_all('tr'):
+        head = row.find('th')
+        if head and head.get('data-stat') == 'year_id':
+            if 'year_id' in info_dict.keys():
+                info_dict['year_id'].append(head.find('a').text.replace('*', '').replace('+', ''))
+
+        for td in row.find_all('td'):
+            if td.get('data-stat') in info_dict.keys():
+                info_dict[td.get("data-stat")].append(td.text)
+
+    return pd.DataFrame.from_dict(info_dict)
 
 
 if __name__ == "__main__":
-    print(get_columns())
+    df = get_player_dataset(Constants.STANDARD_URL + '/' + Constants.PLAYERS + '/F/FaulMa00.htm')
+    print(df.head())
