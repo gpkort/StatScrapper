@@ -250,6 +250,10 @@ def get_player_dataset(url):
     return pd.DataFrame.from_dict(info_dict)
 
 
+def get_all_player_roster_by_letter(letter):
+    req = requests.get(Constants.STANDARD_URL + '/' + Constants.PLAYERS + '/' + letter.upper())
+    soup = BeautifulSoup(req.text, "lxml")
+
 if __name__ == "__main__":
     df = get_player_dataset(Constants.STANDARD_URL + '/' + Constants.PLAYERS + '/F/FaulMa00.htm')
     print(df.head())
