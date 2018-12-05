@@ -250,16 +250,43 @@ def get_player_dataset(url):
     return pd.DataFrame.from_dict(info_dict)
 
 
-def get_all_player_roster_by_letter(letter):
-    req = requests.get(Constants.STANDARD_URL + '/' + Constants.PLAYERS + '/' + letter.upper())
+def get_all_players_roster_by_letter(letter):
+    letter = letter.upper()
+    req = requests.get(Constants.STANDARD_URL + Constants.SLASH + Constants.PLAYERS + Constants.SLASH + letter)
     soup = BeautifulSoup(req.text, "lxml")
     player_div = soup.find_all('div', {'id': 'div_players'})
     player_dict = dict()
 
-    # for a in player_div.find_all('a'):
-    #     player_dict[a.text] =
+    for a in player_div[0].find_all('a'):
+        player_dict[(a.get('href'))] = a.text
+
+    return player_dict
+
+
+def get_all_players_roster():
+    players = list()
+    for l in ascii_lowercase:
+        print(l)
+        players.append(get_all_players_roster_by_letter(l))
+
+    return players
+
+
+
 
 if __name__ == "__main__":
     # df = get_player_dataset(Constants.STANDARD_URL + '/' + Constants.PLAYERS + '/F/FaulMa00.htm')
     # print(df.head())
-    get_all_player_roster_by_letter('a')
+    # z_dict = get_all_players_roster_by_letter('z')
+    # print(list(z_dict.keys())[0])
+    players = get_all_players_roster()
+
+    total = 0
+    for p in players:
+        val = len(p)
+        print(val)
+        total += val
+
+    print('Total length = {}'.format(total))
+
+
