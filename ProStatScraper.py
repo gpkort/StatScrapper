@@ -266,10 +266,22 @@ def get_all_players_roster_by_letter(letter):
 def get_all_players_roster():
     players = list()
     for l in ascii_lowercase:
-        print(l)
         players.append(get_all_players_roster_by_letter(l))
 
     return players
+
+
+def get_probowl_roster_by_year(year: int):
+    # TODO: validate year
+    req = requests.get(Constants.STANDARD_URL + Constants.SLASH + Constants.PROBOWL_PAGE.format(year))
+    soup = BeautifulSoup(req.text, "lxml")
+    table = soup.find('table', {'class': 'sortable stats_table', 'id': 'pro_bowl'})
+    if table:
+        body = table.find('tbody')
+        for row in body.find_all('tr'):
+            pass
+            # name, pos, team = process_row(row)
+            # roster.add_player(name=name, year=str(yr), pos=pos, team=team)
 
 
 

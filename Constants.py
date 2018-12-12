@@ -15,3 +15,6 @@ class POSITION(Enum):
 STANDARD_URL = 'http://www.pro-football-reference.com'
 PLAYERS = '/players'
 SLASH = '/'
+PROBOWL_PAGE = "years/{}/probowl.htm"
+FIRST_YEAR = 1950
+LAST_YEAR = 2017
