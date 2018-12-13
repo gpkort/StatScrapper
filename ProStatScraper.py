@@ -276,14 +276,22 @@ def get_probowl_roster_by_year(year: int):
     req = requests.get(Constants.STANDARD_URL + Constants.SLASH + Constants.PROBOWL_PAGE.format(year))
     soup = BeautifulSoup(req.text, "lxml")
     table = soup.find('table', {'class': 'sortable stats_table', 'id': 'pro_bowl'})
+    probowl_dict = dict()
+
     if table:
+        head = table.find('thead')
         body = table.find('tbody')
+        stat_names = head.find_all('th')
+
+        for name in stat_names:
+            probowl_dict[name['data-stat']] = list()
+
         for row in body.find_all('tr'):
-            pass
-            # name, pos, team = process_row(row)
-            # roster.add_player(name=name, year=str(yr), pos=pos, team=team)
+            for td in row.find_all('td'):
+                if td.get('data-stat') in probowl_dict.keys():
+                    probowl_dict[td.get("data-stat")].append(td.text)
 
-
+    return pd.DataFrame.from_dict(probowl_dict)
 
 
 if __name__ == "__main__":
@@ -291,14 +299,6 @@ if __name__ == "__main__":
     # print(df.head())
     # z_dict = get_all_players_roster_by_letter('z')
     # print(list(z_dict.keys())[0])
-    players = get_all_players_roster()
-
-    total = 0
-    for p in players:
-        val = len(p)
-        print(val)
-        total += val
-
-    print('Total length = {}'.format(total))
+    print(get_probowl_roster_by_year(1992).head())
 
 
