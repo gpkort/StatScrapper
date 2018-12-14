@@ -304,18 +304,35 @@ def get_probowl_roster_by_year(year: int):
         if Constants.ALL_PRO_STRING in df.columns:
             df.drop(Constants.ALL_PRO_STRING, inplace=True, axis=1)
 
+
     return df
 
 def get_teams():
     req = requests.get(Constants.STANDARD_URL + Constants.SLASH + Constants.TEAMS)
     soup = BeautifulSoup(req.text, "lxml")
     table = soup.find('table', {'class': 'sortable stats_table', 'id': 'teams_active'})
-    print(table)
+    body = table.find('tbody')
+    team_dict = dict()
+
+    for k in Constants.TEAM_DICT_KEYS:
+        team_dict[k] = list()
+
+    for row in body.find_all('tr'):
+        tm = row.find('th', {'data-stat': 'team_name'})
+        if tm:
+            team_dict['team_name'].append(tm.text)
+            team_dict['team_url'] = tm.find('a').get()
+
+        for td in row.find_all('td'):
+            key = td.get('data-stat')
+            if key in Constants.TEAM_DICT_KEYS:
+                team_dict[key].append(td.text)
+
+    return pd.DataFrame.from_dict(team_dict)
+
+
+
 
 
 if __name__ == "__main__":
-    # df = get_player_dataset(Constants.STANDARD_URL + '/' + Constants.PLAYERS + '/F/FaulMa00.htm')
-    # print(df.head())
-    # z_dict = get_all_players_roster_by_letter('z')
-    # print(list(z_dict.keys())[0])
-    get_teams()
+    print(get_teams().head())
