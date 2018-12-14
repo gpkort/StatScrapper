@@ -208,6 +208,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import requests
 import Constants
+from Exceptions import IllegalArgumentError
 
 
 def get_columns():
@@ -272,7 +273,10 @@ def get_all_players_roster():
 
 
 def get_probowl_roster_by_year(year: int):
-    # TODO: validate year
+    if not (Constants.FIRST_YEAR <= year <= Constants.LAST_YEAR):
+        raise IllegalArgumentError('Year parameter must be between {} and {}'.format(Constants.FIRST_YEAR,
+                                                                                     Constants.LAST_YEAR))
+
     req = requests.get(Constants.STANDARD_URL + Constants.SLASH + Constants.PROBOWL_PAGE.format(year))
     soup = BeautifulSoup(req.text, "lxml")
     table = soup.find('table', {'class': 'sortable stats_table', 'id': 'pro_bowl'})
@@ -287,11 +291,26 @@ def get_probowl_roster_by_year(year: int):
             probowl_dict[name['data-stat']] = list()
 
         for row in body.find_all('tr'):
+            pos = row.find('th', {'data-stat': 'pos'})
+            if pos:
+                probowl_dict['pos'] = pos.text
+
             for td in row.find_all('td'):
                 if td.get('data-stat') in probowl_dict.keys():
                     probowl_dict[td.get("data-stat")].append(td.text)
 
-    return pd.DataFrame.from_dict(probowl_dict)
+        df = pd.DataFrame.from_dict(probowl_dict)
+
+        if Constants.ALL_PRO_STRING in df.columns:
+            df.drop(Constants.ALL_PRO_STRING, inplace=True, axis=1)
+
+    return df
+
+def get_teams():
+    req = requests.get(Constants.STANDARD_URL + Constants.SLASH + Constants.TEAMS)
+    soup = BeautifulSoup(req.text, "lxml")
+    table = soup.find('table', {'class': 'sortable stats_table', 'id': 'teams_active'})
+    print(table)
 
 
 if __name__ == "__main__":
@@ -299,6 +318,4 @@ if __name__ == "__main__":
     # print(df.head())
     # z_dict = get_all_players_roster_by_letter('z')
     # print(list(z_dict.keys())[0])
-    print(get_probowl_roster_by_year(1992).head())
-
-
+    get_teams()
