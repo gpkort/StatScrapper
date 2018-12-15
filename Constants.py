@@ -24,5 +24,5 @@ LAST_YEAR = 2017
 
 ALL_PRO_STRING = 'all_pro_string'
 
-TEAM_DICT_KEYS = ['team_name', 'team_url' 'year_min', 'year_max', 'years_playoffs', 'championships',
+TEAM_DICT_KEYS = ['team_name', 'team_url', 'year_min', 'year_max', 'years_playoffs', 'championships',
                   'championships_super_bowl', 'championships_conference', 'championships_division']

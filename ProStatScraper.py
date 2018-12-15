@@ -320,13 +320,16 @@ def get_teams():
     for row in body.find_all('tr'):
         tm = row.find('th', {'data-stat': 'team_name'})
         if tm:
-            team_dict['team_name'].append(tm.text)
-            team_dict['team_url'] = tm.find('a').get()
+            atag = tm.find('a')
 
-        for td in row.find_all('td'):
-            key = td.get('data-stat')
-            if key in Constants.TEAM_DICT_KEYS:
-                team_dict[key].append(td.text)
+            if atag:
+                team_dict['team_name'].append(tm.text)
+                team_dict['team_url'].append(tm.find('a').get('href'))
+
+                for td in row.find_all('td'):
+                    key = td.get('data-stat')
+                    if key in Constants.TEAM_DICT_KEYS:
+                        team_dict[key].append(td.text)
 
     return pd.DataFrame.from_dict(team_dict)
 
