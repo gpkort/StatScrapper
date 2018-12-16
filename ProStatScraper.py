@@ -334,8 +334,47 @@ def get_teams():
     return pd.DataFrame.from_dict(team_dict)
 
 
+def get_info_by_team(url: str):
+    req = requests.get(Constants.STANDARD_URL + Constants.SLASH + url)
+    soup = BeautifulSoup(req.text, "lxml")
+    table = soup.find('table', {'class': 'sortable stats_table', 'id': 'team_index'})
+    body = table.find('tbody')
 
+    team_dict = dict()
+
+    for key in Constants.TEAM_YEAR_DICT_KEYS:
+        team_dict[key] = list()
+
+    print(len(body.find_all('tr')))
+    for row in body.find_all('tr'):
+        head = row.find('th', {'data-stat': 'year_id'})
+
+        if head:
+            if not head.has_attr('aria-label'):
+                team_dict['year_id'].append(head.text)
+
+            for td in row.find_all('td'):
+                stat = td.get('data-stat')
+                if stat == 'team':
+                    a = td.find('a')
+                    team_dict['team_url'].append(a.text)
+                    team_dict['team'].append(td.text)
+                elif stat == 'coaches':
+                    tempurl = ''
+                    for a in td.find_all('a'):
+                        tempurl += (a.text + '|')
+                    team_dict['coaches_url'].append(tempurl[0:-1])
+                    team_dict['coaches'].append(td.text)
+                else:
+                    if stat in Constants.TEAM_YEAR_DICT_KEYS:
+                        team_dict[stat].append(td.text)
+
+    return pd.DataFrame.from_dict(team_dict)
 
 
 if __name__ == "__main__":
-    print(get_teams().head())
+    team = get_info_by_team('teams/kan/')
+    print(team.head())
+    # for k, v in team.items():
+    #     print('{} has {} items'.format(k, len(v)))
+    # https://www.pro-football-reference.com/teams/kan/
