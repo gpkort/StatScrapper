@@ -18,6 +18,7 @@ PLAYERS = '/players'
 SLASH = '/'
 PROBOWL_PAGE = "years/{}/probowl.htm"
 TEAMS = 'teams'
+YEARS = 'years'
 
 FIRST_YEAR = 1950
 LAST_YEAR = 2017
@@ -32,3 +33,5 @@ TEAM_YEAR_DICT_KEYS = ['year_id', 'team', 'team_url', 'wins', 'losses', 'ties',
                        'div_finish', 'points', 'points_opp', 'points_diff',
                        'coaches', 'coaches_url', 'rank_off_pts', 'rank_off_yds',
                        'rank_takeaway_giveaway', 'teams_in_league']
+
+DATA_DELIMITER = '|'

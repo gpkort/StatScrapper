@@ -362,7 +362,7 @@ def get_info_by_team(url: str):
                 elif stat == 'coaches':
                     tempurl = ''
                     for a in td.find_all('a'):
-                        tempurl += (a.text + '|')
+                        tempurl += (a.text + Constants.DATA_DELIMITER)
                     team_dict['coaches_url'].append(tempurl[0:-1])
                     team_dict['coaches'].append(td.text)
                 else:
@@ -372,9 +372,29 @@ def get_info_by_team(url: str):
     return pd.DataFrame.from_dict(team_dict)
 
 
+def get_years():
+    req = requests.get(Constants.STANDARD_URL + Constants.SLASH + Constants.YEARS)
+    soup = BeautifulSoup(req.text, "lxml")
+    table = soup.find('table', {'class': 'sortable stats_table', 'id': 'years'})
+    body = table.find('tbody')
+    years = list()
+
+    for row in body.find_all('tr'):
+        year_dict = dict()
+        th = row.find('th', {'data-stat': 'year-id'})
+        year_dict[th.text] = list()
+        yrs = row.find('td', {'data-stat' : 'league_id'})
+
+        for a in yrs.find_all('a'):
+            year_dict[th.text].append(a.get('href'))
+
+        years.append(year_dict)
+
+    print(years[:3])
+
+
 if __name__ == "__main__":
-    team = get_info_by_team('teams/kan/')
-    print(team.head())
+    get_years()
     # for k, v in team.items():
     #     print('{} has {} items'.format(k, len(v)))
     # https://www.pro-football-reference.com/teams/kan/
