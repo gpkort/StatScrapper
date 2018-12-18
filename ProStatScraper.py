@@ -392,6 +392,9 @@ def get_years():
 
     print(years[:3])
 
+def get_year(year: int):
+    req = requests.get(Constants.STANDARD_URL + Constants.SLASH + Constants.YEARS +'{}'.format(year))
+    soup = BeautifulSoup(req.text, "lxml")
 
 if __name__ == "__main__":
     get_years()
