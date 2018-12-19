@@ -392,9 +392,46 @@ def get_years():
 
     print(years[:3])
 
-def get_year(year: int):
+def get_year_playoff_teams(year: int):
     req = requests.get(Constants.STANDARD_URL + Constants.SLASH + Constants.YEARS +'{}'.format(year))
     soup = BeautifulSoup(req.text, "lxml")
+    table = soup.find('table', {'id': 'afc_playoff_standings'})
+    body = table.find('tbody')
+
+
+    '''
+    <table class="sortable stats_table now_sortable" id="afc_playoff_standings" data-cols-to-freeze="1">
+   <thead>      
+      <tr>
+         <th aria-label="Tm" data-stat="team" scope="col" class=" poptip sort_default_asc show_partial_when_sorting left">Tm</th>
+         <th aria-label="Wins" data-stat="wins" scope="col" class=" poptip center" data-tip="Games Won">W</th>
+         <th aria-label="Losses" data-stat="losses" scope="col" class=" poptip center" data-tip="Games Lost">L</th>
+         <th aria-label="Ties" data-stat="ties" scope="col" class=" poptip center" data-tip="Tie Games">T</th>
+         <th aria-label="Position" data-stat="why" scope="col" class=" poptip center">Position</th>
+         <th aria-label="Reason the team is seeded the way it is, based on NFL tiebreaker rules" data-stat="reason" scope="col" class=" poptip center" data-tip="Reason the team is seeded the way it is, based on NFL tiebreaker rules">Reason</th>
+      </tr>
+      
+   </thead>
+   <tbody>
+<tr data-row="0"><th scope="row" class="left " data-stat="team" csk="1"><a href="/teams/sdg/2006.htm"></a><a href="/teams/sdg/2006.htm">San Diego Chargers</a> (1)</th><td class="right " data-stat="wins">14</td><td class="right " data-stat="losses">2</td><td class="right iz" data-stat="ties">0</td><td class="right " data-stat="why">West Champion</td><td class="right iz" data-stat="reason"></td></tr>
+<tr data-row="1"><th scope="row" class="left " data-stat="team" csk="2"><a href="/teams/rav/2006.htm"></a><a href="/teams/rav/2006.htm">Baltimore Ravens</a> (2)</th><td class="right " data-stat="wins">13</td><td class="right " data-stat="losses">3</td><td class="right iz" data-stat="ties">0</td><td class="right " data-stat="why">North Champion</td><td class="right iz" data-stat="reason"></td></tr>
+<tr data-row="2"><th scope="row" class="left " data-stat="team" csk="3"><a href="/teams/clt/2006.htm"></a><a href="/teams/clt/2006.htm">Indianapolis Colts</a> (3)</th><td class="right " data-stat="wins">12</td><td class="right " data-stat="losses">4</td><td class="right iz" data-stat="ties">0</td><td class="right " data-stat="why">South Champion</td><td class="right " data-stat="reason">head-to-head record</td></tr>
+<tr data-row="3"><th scope="row" class="left " data-stat="team" csk="4"><a href="/teams/nwe/2006.htm"></a><a href="/teams/nwe/2006.htm">New England Patriots</a> (4)</th><td class="right " data-stat="wins">12</td><td class="right " data-stat="losses">4</td><td class="right iz" data-stat="ties">0</td><td class="right " data-stat="why">East Champion</td><td class="right iz" data-stat="reason"></td></tr>
+<tr data-row="4"><th scope="row" class="left " data-stat="team" csk="5"><a href="/teams/nyj/2006.htm"></a><a href="/teams/nyj/2006.htm">New York Jets</a> (5)</th><td class="right " data-stat="wins">10</td><td class="right " data-stat="losses">6</td><td class="right iz" data-stat="ties">0</td><td class="right " data-stat="why">Wild Card #1</td><td class="right iz" data-stat="reason"></td></tr>
+<tr data-row="5"><th scope="row" class="left " data-stat="team" csk="6"><a href="/teams/kan/2006.htm"></a><a href="/teams/kan/2006.htm">Kansas City Chiefs</a> (6)</th><td class="right " data-stat="wins">9</td><td class="right " data-stat="losses">7</td><td class="right iz" data-stat="ties">0</td><td class="right " data-stat="why">Wild Card #2</td><td class="right " data-stat="reason">division win percentage</td></tr>
+<tr class="divider" data-row="6"><th scope="row" class="left " data-stat="team" csk="7"><a href="/teams/den/2006.htm"></a><a href="/teams/den/2006.htm">Denver Broncos</a></th><td class="right " data-stat="wins">9</td><td class="right " data-stat="losses">7</td><td class="right iz" data-stat="ties">0</td><td class="right iz" data-stat="why"></td><td class="right iz" data-stat="reason"></td></tr>
+<tr data-row="7"><th scope="row" class="left " data-stat="team" csk="8"><a href="/teams/cin/2006.htm"></a><a href="/teams/cin/2006.htm">Cincinnati Bengals</a></th><td class="right " data-stat="wins">8</td><td class="right " data-stat="losses">8</td><td class="right iz" data-stat="ties">0</td><td class="right iz" data-stat="why"></td><td class="right " data-stat="reason">conference win percentage</td></tr>
+<tr data-row="8"><th scope="row" class="left " data-stat="team" csk="9"><a href="/teams/oti/2006.htm"></a><a href="/teams/oti/2006.htm">Tennessee Titans</a></th><td class="right " data-stat="wins">8</td><td class="right " data-stat="losses">8</td><td class="right iz" data-stat="ties">0</td><td class="right iz" data-stat="why"></td><td class="right " data-stat="reason">strength of victory</td></tr>
+<tr data-row="9"><th scope="row" class="left " data-stat="team" csk="10"><a href="/teams/jax/2006.htm"></a><a href="/teams/jax/2006.htm">Jacksonville Jaguars</a></th><td class="right " data-stat="wins">8</td><td class="right " data-stat="losses">8</td><td class="right iz" data-stat="ties">0</td><td class="right iz" data-stat="why"></td><td class="right " data-stat="reason">head-to-head record</td></tr>
+<tr data-row="10"><th scope="row" class="left " data-stat="team" csk="11"><a href="/teams/pit/2006.htm"></a><a href="/teams/pit/2006.htm">Pittsburgh Steelers</a></th><td class="right " data-stat="wins">8</td><td class="right " data-stat="losses">8</td><td class="right iz" data-stat="ties">0</td><td class="right iz" data-stat="why"></td><td class="right iz" data-stat="reason"></td></tr>
+<tr data-row="11"><th scope="row" class="left " data-stat="team" csk="12"><a href="/teams/buf/2006.htm"></a><a href="/teams/buf/2006.htm">Buffalo Bills</a></th><td class="right " data-stat="wins">7</td><td class="right " data-stat="losses">9</td><td class="right iz" data-stat="ties">0</td><td class="right iz" data-stat="why"></td><td class="right iz" data-stat="reason"></td></tr>
+<tr data-row="12"><th scope="row" class="left " data-stat="team" csk="13"><a href="/teams/htx/2006.htm"></a><a href="/teams/htx/2006.htm">Houston Texans</a></th><td class="right " data-stat="wins">6</td><td class="right " data-stat="losses">10</td><td class="right iz" data-stat="ties">0</td><td class="right iz" data-stat="why"></td><td class="right " data-stat="reason">head-to-head record</td></tr>
+<tr data-row="13"><th scope="row" class="left " data-stat="team" csk="14"><a href="/teams/mia/2006.htm"></a><a href="/teams/mia/2006.htm">Miami Dolphins</a></th><td class="right " data-stat="wins">6</td><td class="right " data-stat="losses">10</td><td class="right iz" data-stat="ties">0</td><td class="right iz" data-stat="why"></td><td class="right iz" data-stat="reason"></td></tr>
+<tr data-row="14"><th scope="row" class="left " data-stat="team" csk="15"><a href="/teams/cle/2006.htm"></a><a href="/teams/cle/2006.htm">Cleveland Browns</a></th><td class="right " data-stat="wins">4</td><td class="right " data-stat="losses">12</td><td class="right iz" data-stat="ties">0</td><td class="right iz" data-stat="why"></td><td class="right iz" data-stat="reason"></td></tr>
+<tr data-row="15"><th scope="row" class="left " data-stat="team" csk="16"><a href="/teams/rai/2006.htm"></a><a href="/teams/rai/2006.htm">Oakland Raiders</a></th><td class="right " data-stat="wins">2</td><td class="right " data-stat="losses">14</td><td class="right iz" data-stat="ties">0</td><td class="right iz" data-stat="why"></td><td class="right iz" data-stat="reason"></td></tr>
+
+</tbody></table>
+    '''
 
 if __name__ == "__main__":
     get_years()
