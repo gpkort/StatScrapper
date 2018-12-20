@@ -398,6 +398,8 @@ def get_year_playoff_teams(year: int):
     table = soup.find('table', {'id': 'afc_playoff_standings'})
     body = table.find('tbody')
 
+    for row in body.find_all('tr'):
+        pass
 
     '''
     <table class="sortable stats_table now_sortable" id="afc_playoff_standings" data-cols-to-freeze="1">
