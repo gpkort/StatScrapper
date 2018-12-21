@@ -34,6 +34,6 @@ TEAM_YEAR_DICT_KEYS = ['year_id', 'team', 'team_url', 'wins', 'losses', 'ties',
                        'coaches', 'coaches_url', 'rank_off_pts', 'rank_off_yds',
                        'rank_takeaway_giveaway', 'teams_in_league']
 
-YEAR_PLAYOFF_KEYS = ['team', 'team_url', 'seed', 'conference']
+YEAR_PLAYOFF_KEYS = ['team', 'team_url', 'seed', 'conference', 'wins', 'losses', 'ties']
 
 DATA_DELIMITER = '|'
